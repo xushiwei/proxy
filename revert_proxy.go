@@ -139,14 +139,25 @@ func (p *ReverseProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 	copyHeader(rw.Header(), res.Header)
 
-	rw.WriteHeader(res.StatusCode)
-
 	dmp2, _ := httputil.DumpResponse(res, false)
 	log.Println(string(dmp2))
 
 	switch res.StatusCode {
 	case 301, 302, 307:
+		l := res.Header["Location"]
+		if l != nil {
+			loc := l[0]
+			log.Println("Redirect location:", loc)
+			for _, forbidden := range p.forbiddens {
+				if strings.HasPrefix(loc, forbidden) {
+					rw.WriteHeader(404)
+					return
+				}
+			}
+		}
 	}
+
+	rw.WriteHeader(res.StatusCode)
 	if res.Body != nil {
 		var dst io.Writer = rw
 		if p.FlushInterval != 0 {
