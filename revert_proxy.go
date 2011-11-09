@@ -73,7 +73,7 @@ func newSingleHostReverseProxy(target *url.URL) *ReverseProxy {
 	return &ReverseProxy{Director: director}
 }
 
-func NewReverseProxy(domainProxy, domain string) (proxy *ReverseProxy, err error) {
+func New(domainProxy, domain string) (proxy *ReverseProxy, err error) {
 	u, err := url.Parse(domainProxy)
 	if err != nil {
 		return
