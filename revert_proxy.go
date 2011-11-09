@@ -40,6 +40,7 @@ type ReverseProxy struct {
 	FlushInterval int64
 
 	DomainProxy, Domain string
+	forbiddens []string
 }
 
 func singleJoiningSlash(a, b string) string {
@@ -91,6 +92,10 @@ func copyHeader(dst, src http.Header) {
 	}
 }
 
+func (p *ReverseProxy) Forbidden(prefix string) {
+	p.forbiddens = append(p.forbiddens, prefix)
+}
+
 func (p *ReverseProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	transport := p.Transport
 	if transport == nil {
@@ -139,6 +144,9 @@ func (p *ReverseProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	dmp2, _ := httputil.DumpResponse(res, false)
 	log.Println(string(dmp2))
 
+	switch res.StatusCode {
+	case 301, 302, 307:
+	}
 	if res.Body != nil {
 		var dst io.Writer = rw
 		if p.FlushInterval != 0 {
