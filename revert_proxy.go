@@ -4,7 +4,7 @@
 
 // HTTP reverse proxy handler
 
-package main
+package proxy 
 
 import (
 	"io"
