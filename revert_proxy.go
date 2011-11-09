@@ -4,7 +4,7 @@
 
 // HTTP reverse proxy handler
 
-package main
+package proxy 
 
 import (
 	"io"
@@ -75,7 +75,7 @@ func newSingleHostReverseProxy(target *url.URL) *ReverseProxy {
 }
 
 func New(domainProxy, domain string) (proxy *ReverseProxy, err error) {
-	u, err := url.Parse(domainProxy)
+	u, err := url.Parse("http://" + domainProxy)
 	if err != nil {
 		return
 	}
