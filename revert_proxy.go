@@ -208,7 +208,7 @@ func (m *maxLatencyWriter) Write(p []byte) (n int, err error) {
 }
 
 func (m *maxLatencyWriter) flushLoop() {
-	t := time.NewTicker(m.latency)
+	t := time.NewTicker(time.Duration(m.latency))
 	defer t.Stop()
 	for {
 		select {
