@@ -4,12 +4,12 @@
 
 // HTTP reverse proxy handler
 
-package proxy 
+package revert
 
 import (
+	"bytes"
 	"io"
 	"log"
-	"bytes"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -40,7 +40,7 @@ type ReverseProxy struct {
 	FlushInterval int64
 
 	DomainProxy, Domain string
-	forbiddens []string
+	forbiddens          []string
 }
 
 func singleJoiningSlash(a, b string) string {
@@ -127,7 +127,9 @@ func (p *ReverseProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 	outreq.URL.Host = p.DomainProxy
 	outreq.Host = outreq.URL.Host
+	// spew.Dump(outreq)
 	dmp, _ := httputil.DumpRequest(outreq, false)
+	println("请求。。。。")
 	log.Println(string(dmp))
 
 	res, err := transport.RoundTrip(outreq)
@@ -140,6 +142,7 @@ func (p *ReverseProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	copyHeader(rw.Header(), res.Header)
 
 	dmp2, _ := httputil.DumpResponse(res, false)
+	println("响应。。。。")
 	log.Println(string(dmp2))
 
 	switch res.StatusCode {
@@ -167,8 +170,8 @@ func (p *ReverseProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		}
 		if res.StatusCode == 200 {
 			ct := res.Header["Content-Type"]
-			if ct != nil && ct[0] == "text/plain; charset=UTF-8" {
-				log.Println("Transform: text/plain; charset=UTF-8")
+			if ct != nil && ct[0] == "text/plain; charset=utf-8" {
+				log.Println("Transform: text/plain; charset=utf-8")
 				buf := bytes.NewBuffer(nil)
 				io.Copy(buf, res.Body)
 				b := bytes.Replace(buf.Bytes(), []byte(p.DomainProxy), []byte(p.Domain), -1)
