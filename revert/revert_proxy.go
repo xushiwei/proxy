@@ -129,7 +129,7 @@ func (p *ReverseProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	outreq.Host = outreq.URL.Host
 	// spew.Dump(outreq)
 	dmp, _ := httputil.DumpRequest(outreq, false)
-	println("请求。。。。")
+	println("request 。。。。")
 	log.Println(string(dmp))
 
 	res, err := transport.RoundTrip(outreq)
@@ -142,7 +142,7 @@ func (p *ReverseProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	copyHeader(rw.Header(), res.Header)
 
 	dmp2, _ := httputil.DumpResponse(res, false)
-	println("响应。。。。")
+	println("response。。。。")
 	log.Println(string(dmp2))
 
 	switch res.StatusCode {
